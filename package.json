@@ -1,0 +1,22 @@
+{
+  "name": "teamgenprofile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dylank641/teamGenProfile.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dylank641/teamGenProfile/issues"
+  },
+  "homepage": "https://github.com/dylank641/teamGenProfile#readme"
+}
