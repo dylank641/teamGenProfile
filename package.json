@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/dylank641/teamGenProfile/issues"
   },
-  "homepage": "https://github.com/dylank641/teamGenProfile#readme"
+  "homepage": "https://github.com/dylank641/teamGenProfile#readme",
+  "devDependencies": {
+    "jest": "^28.0.1"
+  },
+  "dependencies": {
+    "jes": "^0.6.1"
+  }
 }
