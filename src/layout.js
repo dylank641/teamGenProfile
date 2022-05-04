@@ -4,7 +4,7 @@ const manCard = (manager) => {
     <div style="height: 5vw; width: 16vw; background-color: blue;">
         <h1>${manager.getName()}</h1>
         <h2>${manager.getRole()}</h2>
-        <h2>${manager.getEmail()}</h2>
+        <h2>Email: <a href="mailto:${manager.getEmail()}" style="color: inherit;">${manager.getEmail()}</a></h2>
         <h2>ID: ${manager.getId()}</h2>
         <h2>Office Number: ${manager.getOfficeNumber()}</h2>
     </div>
@@ -19,9 +19,9 @@ const manCard = (manager) => {
       <div style="height: 5vw; width: 16vw; background-color: blue;">
           <h1>${currentEng.getName()}</h1>
           <h2>${currentEng.getRole()}</h2>
-          <h2>${currentEng.getEmail()}</h2>
+          <h2>Email: <a href="mailto:${currentEng.getEmail()}" style="color: inherit;">${currentEng.getEmail()}</a></h2>
           <h2>ID: ${currentEng.getId()}</h2>
-          <h2>GitHub: ${currentEng.getGithub()}</h2>
+          <h2>Github: <a target="_blank" href="https://github.com/${currentEng.getGithub()}" style="color: inherit;">${currentEng.getGithub()}</a></h2>
       </div>
   </div>`;
     }
@@ -36,7 +36,7 @@ const manCard = (manager) => {
       <div style="height: 5vw; width: 16vw; background-color: blue;">
           <h1>${currentIntern.getName()}</h1>
           <h2>${currentIntern.getRole()}</h2>
-          <h2>${currentIntern.getEmail()}</h2>
+          <h2>Email: <a href="mailto:${currentIntern.getEmail()}" style="color: inherit;">${currentIntern.getEmail()}</a></h2>
           <h2>ID: ${currentIntern.getId()}</h2>
           <h2>School: ${currentIntern.getSchool()}</h2>
       </div>
@@ -56,13 +56,13 @@ const manCard = (manager) => {
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Team Organizer</title>
+        <title>Our Team</title>
     
     </head>
     
-    <body class="bg-black bg-opacity-75">
+    <body>
         <header>
-            <div class="container py-3 mx-auto">
+            <div style="background-color: red;">
                 <h1 style="font-family: 'Roboto', sans-serif; font-size: 5vw; display: flex; justify-content: center;">
                     Our Team
                 </h1>
