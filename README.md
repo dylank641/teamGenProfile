@@ -10,6 +10,7 @@ Download the file from GitHub and run "npm install".
 ![home](./src/assets/teamOG.png)
 
 ## Watch this walkthrough video!
+https://drive.google.com/file/d/1HNlD8JrPTHJykw9TL5X7xcloRfCKcRnT/view
 
 ## Contribution 
 Made with ❤️ by James Killelea
