@@ -1,282 +1,272 @@
-const inquirer = require("inquirer");
-const mailCheck =
-  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/;
+const inquirer = require('inquirer');
+const genMark = require('./src/layout');
+const fs = require('fs');
+const ManagerClass = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern')
+
+var manager
+var engineers = [];
+var interns = [];
 
 
-
-const Employee = require("./lib/Employee");
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
-
-const generatePage = require("./src/layout");
-
-const createFile = require("./utils/inputCheck");
-
-// function Team() {
-//   this.manager = {};
-//   this.employees = [];
-//   this.employeeCount = 0;
-//   this.engineers = [];
-//   this.interns = [];
-// }
-
-Team.prototype.createTeam = function () {
-//   console.clear();
-//   console.log(
-// (`
-//                                        .
-//                                    ,-_-|
-//                                   ([o o])
-//  __       __        .__        ooO--(_)--Ooo             __
-// /  \\    /  \\ ____ |  |   ____  ____   _____   ____   _/  |_  ____
-// \\   \\/\\/   // __ \\|  | _/ ___\\/  _ \\ /     \\_/ __ \\  \\   __\\/  _ \\
-//  \\        /\\  ___/|  |_\\  \\__(  <_> )  Y Y  \\  ___/   |  | (  <_> )
-//   \\__/\\  /  \\___  >____/\\___  >____/|__|_|  /\\___  >  |__|  \\____/
-//        \\/       \\/          \\/            \\/     \\/
-// __________                __       .___              _____  __
-// \\______   \\_____    ____ |  | __ __| _/___________ _/ ____\\/  |_
-//  |    |  _/\\__  \\ _/ ___\\|  |/ // __ |\\_  __ \\__  \\\\   __\\\\   __\\
-//  |    |   \\ / __ \\\\  \\___|    </ /_/ | |  | \\// __ \\|  |   |  |
-//  |______  /(____  /\\___  >__|_ \\____ | |__|  (____  /__|   |__|
-//         \\/      \\/     \\/     \\/    \\/            \\/
-//   `)
-//   );
-  console.log('Start by creating a team manager!');
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "name",
-        message: "(Required) Please enter the employee's name:",
-        default: "Bob",
-        validate: (nameInput) => {
-          if (nameInput && !Number(nameInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid name for the employee`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "id",
-        message: "(Required) Please enter the employee's ID number:",
-        default: 1234,
-        validate: (idInput) => {
-          if (Number(idInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid employee ID`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "email",
-        message: "(Required) Please enter the employee's email address:",
-        default: "bob@email.com",
-        validate: (emailInput) => {
-          if (mailCheck.test(emailInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid email address`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "office",
-        message: "(Required) Please enter the team manager's office number:",
-        default: 123,
-        validate: (response) => {
-          if (response) {
-            return true;
-          } else {
-            console.log(this.message);
-            return false;
-          }
-        },
-      },
-    ])
-    .then(({ name, id, email, office }) => {
-      const manager = new Manager(name, id, email, office);
-      this.manager = manager;
-      this.employees.push(manager);
-      this.employeeCount++;
-      this.showOptions();
-    });
-};
-
-Team.prototype.showOptions = function () {
-  console.table(this.employees);
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "choice",
-        message: "What would you like to do next?",
-        choices: [("Add an Engineer"), ("Add an Intern"), (`Finish building ${this.manager.name}'s team of ${this.employeeCount}`)],
-      },
-    ])
-    .then((menu) => {
-      if (menu.choice === ("Add an Engineer")) {
-        this.addEngineer();
+// TODO: Create an array of questions for user input
+const managerQuestions = [{
+    type: "input",
+    name: "hello",
+    message: "Hello and welcome! Lets start by creating a manager. (Press Enter to continue)"
+  },
+  {
+    type: "input",
+    name: "name",
+    message: "Please enter the Managers name (Required)",
+    default: "Dylan",
+    validate: (name) => {
+      if (name && isNaN(name)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid name--`);
+        return false;
       }
-      if (menu.choice === ("Add an Intern")) {
-        this.addIntern();
+    },
+  },
+  {
+    type: "input",
+    name: "id",
+    message: "Please enter the managers ID number (Required)",
+    default: 6464,
+    validate: (idInput) => {
+      if (Number(idInput)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid employee ID--`);
+        return false;
       }
-      if (menu.choice === (`Finish building ${this.manager.name}'s team of ${this.employeeCount}`)) {
-        this.exitProgram();
+    },
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "Please enter the managers email address (Required)",
+    default: "dylanallday@gmail.com",
+    validate: (emailInput) => {
+      if (emailInput.includes("@")) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid email address--`);
+        return false;
       }
+    },
+  },
+  {
+    type: 'input',
+    name: 'officeNumber',
+    message: 'Please provide the managers office number. (Required)',
+    default: 6969,
+    validate: usageInfo => {
+      if (Number(usageInfo)) {
+        return true;
+      } else {
+        console.log(' --Please enter a valid office number--');
+        return false;
+      }
+    }
+  },
+
+];
+
+let engineerQuestions = [
+  {
+    type: "input",
+    name: "name",
+    message: "Please enter the Engineers name (Required)",
+    default: "Dan",
+    validate: (name) => {
+      if (name && isNaN(name)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid name--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: "input",
+    name: "id",
+    message: "Please enter the Engineers ID number (Required)",
+    default: 1234,
+    validate: (idInput) => {
+      if (Number(idInput)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid employee ID--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "Please enter the Engineers email address (Required)",
+    default: "dan@gmail.com",
+    validate: (emailInput) => {
+      if (emailInput.includes("@")) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid email address--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: 'input',
+    name: 'github',
+    message: 'Please provide the Engineers Github username. (Required)',
+    default: 'daniscool',
+    validate: usageInfo => {
+      if (usageInfo) {
+        return true;
+      } else {
+        console.log(' --Please enter a github username--');
+        return false;
+      }
+    }
+  },
+]
+
+let internQuestions = [
+  {
+    type: "input",
+    name: "name",
+    message: "Please enter the Interns name (Required)",
+    default: "Ben",
+    validate: (name) => {
+      if (name && isNaN(name)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid name--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: "input",
+    name: "id",
+    message: "Please enter the Interns ID number (Required)",
+    default: 6278,
+    validate: (idInput) => {
+      if (Number(idInput)) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid employee ID--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: "input",
+    name: "email",
+    message: "Please enter the Interns email address (Required)",
+    default: "benthegod@gmail.com",
+    validate: (emailInput) => {
+      if (emailInput.includes("@")) {
+        return true;
+      } else {
+        console.log(` --Please enter a valid email address--`);
+        return false;
+      }
+    },
+  },
+  {
+    type: 'input',
+    name: 'github',
+    message: 'Please provide the Interns Github username. (Required)',
+    default: 'benRocks',
+    validate: usageInfo => {
+      if (usageInfo) {
+        return true;
+      } else {
+        console.log(' --Please enter a valid github username--');
+        return false;
+      }
+    }
+  },
+]
+
+
+// TODO: Create a function to initialize app
+function init() {
+  inquirer.prompt(managerQuestions)
+    .then(function (answers) {
+      manager = new ManagerClass(answers.name, answers.id, answers.email, answers.officeNumber)
+      menu();
+    })
+    .catch(err => {
+      console.log(err);
     });
-};
 
-Team.prototype.addEngineer = function () {
-  if (this.engineers.length > 0 ) {
-    console.log(`
-      ========================
-      Total Engineers: ${this.engineers.length}
-      ========================
-      `);
-    console.table(this.engineers);
-  };
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "name",
-        message: "(Required) Please enter the employee's name:",
-        default: "Bob",
-        validate: (nameInput) => {
-          if (nameInput && !Number(nameInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid name for the employee`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "id",
-        message: "(Required) Please enter the employee's ID number:",
-        default: 1234,
-        validate: (idInput) => {
-          if (Number(idInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid employee ID`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "email",
-        message: "(Required) Please enter the employee's email address:",
-        default: "bob@email.com",
-        validate: (emailInput) => {
-          if (mailCheck.test(emailInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid email address`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "github",
-        message: "Please enter the engineer's github username",
-        default: "laszlo-ratesic",
-      },
-    ])
-    .then(({ name, id, email, github }) => {
-      const engineer = new Engineer(name, id, email, github);
+}
 
-      this.employees.push(engineer);
-      this.employeeCount++;
-      this.engineers.push(engineer);
-      this.showOptions();
+function internPop() {
+  inquirer.prompt(internQuestions)
+    .then(function (answers) {
+      interns.push (new Intern(answers.name, answers.id, answers.email, answers.github))
+      menu();
+    })
+    .catch(err => {
+      console.log(err);
     });
-};
 
-Team.prototype.addIntern = function () {
-  if (this.interns.length > 0) {
-    console.log(`
-      ========================
-      Total Interns: ${this.interns.length}
-      ========================
-      `);
-    console.table(this.interns);
-  }
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "name",
-        message: "(Required) Please enter the employee's name:",
-        default: "Bob",
-        validate: (nameInput) => {
-          if (nameInput && !Number(nameInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid name for the employee`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "id",
-        message: "(Required) Please enter the employee's ID number:",
-        default: 1234,
-        validate: (idInput) => {
-          if (Number(idInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid employee ID`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "email",
-        message: "(Required) Please enter the employee's email address:",
-        default: "bob@email.com",
-        validate: (emailInput) => {
-          if (mailCheck.test(emailInput)) {
-            return true;
-          } else {
-            console.log(`You must enter a valid email address`);
-            return false;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "school",
-        message: "Please enter the name of the intern's school:",
-        default: "Yale",
-      },
-    ])
-    .then(({ name, id, email, school }) => {
-      const intern = new Intern(name, id, email, school);
+}
 
-      this.employees.push(intern);
-      this.employeeCount++;
-      this.interns.push(intern);
-      this.showOptions();
+
+function eng() {
+  inquirer.prompt(engineerQuestions)
+    .then(function (answers) {
+      engineers.push (new Engineer(answers.name, answers.id, answers.email, answers.github))
+      menu();
+    })
+    .catch(err => {
+      console.log(err);
     });
-};
 
-Team.prototype.exitProgram = function () {
-  createFile(generatePage(this)).then((message) => {
+}
+
+function done(){
+  var team = { manager, engineers, interns }
+  var markUp = genMark(team);
+  
+  fs.writeFile('./dist/index.html', markUp, err => {
+    if (err) {
+      console.log(err);
+      return;
+    }
   });
-};
+}
 
+function menu() {
+  inquirer.prompt({
+      type: 'list',
+      name: 'menu',
+      message: 'Please choose an answer choice. (Required)',
+      choices: ['Enter an Engineer', 'Enter an Intern', 'Done and Generate File']
+    })
+    .then(function (answer) {
+      console.log(answer.menu);
+      if(answer.menu=="Enter an Engineer"){
+        eng();
+        
+      }
+      else if( answer.menu =="Enter an Intern"){
+        internPop();
+        
+      }
+      else{
+        done();
+      }
+    })
+}
+
+
+// Function call to initialize app
+init();
